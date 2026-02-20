@@ -1,0 +1,259 @@
+/* ── Reset & base ─────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial,
+    sans-serif;
+  background: linear-gradient(135deg, #e8f0fe 0%, #f4f4f4 100%);
+  min-height: 100vh;
+  color: #222;
+}
+
+/* ── Page wrapper — centres everything ───────────── */
+.page {
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  padding: 24px 16px 40px;
+}
+
+/* ── Inner column: capped width, full on small screens */
+.page-inner {
+  width: 100%;
+  max-width: 520px;
+}
+
+/* ── Card (form + results share the same style) ───── */
+.card {
+  width: 100%;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 28px 24px;
+}
+
+/* ── Header ────────────────────────────────────────── */
+.app-title {
+  font-size: clamp(1.4rem, 5vw, 1.8rem);
+  font-weight: 800;
+  color: #0057d9;
+  text-align: center;
+  letter-spacing: -0.5px;
+  margin-bottom: 2px;
+}
+
+.app-subtitle {
+  font-size: clamp(1rem, 4vw, 1.15rem);
+  font-weight: 600;
+  color: #444;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.logo-wrapper {
+  display: flex;
+  justify-content: center;
+  margin: 12px 0 8px;
+}
+
+.app-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  border-radius: 12px;
+}
+
+/* ── Error banner ──────────────────────────────────── */
+.error-banner {
+  margin-bottom: 16px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  background: #fff0f0;
+  color: #b00020;
+  border: 1px solid #f5c0c0;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+/* ── Form elements ─────────────────────────────────── */
+.field {
+  margin-bottom: 16px;
+}
+
+.label-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  font-size: 0.92rem;
+  color: #333;
+  margin-bottom: 6px;
+}
+
+.label-row label {
+  margin-bottom: 0;
+}
+
+textarea,
+input[type="text"] {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid #d0d5dd;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  color: #222;
+  background: #fafafa;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  resize: vertical;
+  line-height: 1.5;
+}
+
+textarea:focus,
+input[type="text"]:focus {
+  outline: none;
+  border-color: #0057d9;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(0, 87, 217, 0.12);
+}
+
+/* ── Number count pill ─────────────────────────────── */
+.number-count {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #fff;
+  background: #0057d9;
+  padding: 3px 10px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+/* ── Send button ───────────────────────────────────── */
+.send-btn {
+  display: block;
+  width: 100%;
+  padding: 14px;
+  margin-top: 4px;
+  background: #0057d9;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  letter-spacing: 0.3px;
+  transition: background 0.2s, transform 0.1s;
+  /* Minimum 44px touch target */
+  min-height: 48px;
+}
+
+.send-btn:hover:not(:disabled) {
+  background: #0046b3;
+}
+
+.send-btn:active:not(:disabled) {
+  transform: scale(0.98);
+}
+
+.send-btn:disabled {
+  background: #7aa7f5;
+  cursor: not-allowed;
+}
+
+/* ── Divider between form card and results ─────────── */
+.section-gap {
+  height: 20px;
+}
+
+/* ── Results card ──────────────────────────────────── */
+.results-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 14px;
+}
+
+/* ── Summary bar ───────────────────────────────────── */
+.summary-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.summary-item {
+  font-weight: 700;
+  font-size: 0.82rem;
+  padding: 4px 12px;
+  border-radius: 20px;
+  white-space: nowrap;
+}
+
+.summary-total   { background: #e9ecef; color: #333; }
+.summary-success { background: #d1fae5; color: #065f46; }
+.summary-failed  { background: #fee2e2; color: #991b1b; }
+.summary-invalid { background: #fef3c7; color: #78350f; }
+
+/* ── Individual result row ─────────────────────────── */
+.result {
+  padding: 10px 12px;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  font-size: 0.92rem;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  background: #fafafa;
+}
+
+.result:last-child {
+  margin-bottom: 0;
+}
+
+.result-phone {
+  font-weight: 600;
+  flex: 1;
+  min-width: 120px;
+}
+
+.success { color: #065f46; font-weight: 600; }
+.failed  { color: #991b1b; font-weight: 600; }
+.invalid { color: #78350f; font-weight: 600; }
+
+/* ── Responsive tweaks ─────────────────────────────── */
+@media (max-width: 480px) {
+  .card {
+    padding: 20px 16px;
+    border-radius: 10px;
+  }
+
+  .page {
+    padding: 16px 12px 32px;
+  }
+}
+
+@media (min-width: 768px) {
+  .page {
+    align-items: center;
+    padding: 40px 24px;
+  }
+}
