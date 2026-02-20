@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import Image from "next/image";
 
 export default function HomePage() {
@@ -9,6 +9,9 @@ export default function HomePage() {
   const [results, setResults] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+
+  const [balance, setBalance] = useState(null);   // null = loading, number = loaded
+  const [balanceError, setBalanceError] = useState("");
 
   const numberCount = useMemo(() => {
     return receiverNumber
@@ -20,10 +23,32 @@ export default function HomePage() {
   const summary = useMemo(() => {
     if (!results) return null;
     const success = results.filter((r) => r.status === "Success").length;
-    const failed = results.filter((r) => r.status === "Failed").length;
+    const failed  = results.filter((r) => r.status === "Failed").length;
     const invalid = results.filter((r) => r.status === "Invalid number").length;
     return { success, failed, invalid, total: results.length };
   }, [results]);
+
+  const fetchBalance = useCallback(async () => {
+    setBalanceError("");
+    try {
+      const res = await fetch("/api/balance");
+      const data = await res.json();
+      if (!res.ok || data.error) {
+        setBalanceError(data.error || "Could not load balance.");
+        setBalance(null);
+      } else {
+        setBalance(data.balance);
+      }
+    } catch {
+      setBalanceError("Could not load balance.");
+      setBalance(null);
+    }
+  }, []);
+
+  // Fetch balance on mount
+  useEffect(() => {
+    fetchBalance();
+  }, [fetchBalance]);
 
   async function handleSubmit(event) {
     event.preventDefault();
@@ -48,12 +73,25 @@ export default function HomePage() {
       setResults(data.results || []);
       setReceiverNumber("");
       setMessage("");
+
+      // Refresh balance after sending so it reflects the deduction
+      fetchBalance();
     } catch {
       setError("Network error. Please try again.");
     } finally {
       setIsLoading(false);
     }
   }
+
+  // Determine balance status
+  const balanceStatus =
+    balance === null
+      ? "loading"
+      : balance === 0
+        ? "empty"
+        : balance <= 10
+          ? "low"
+          : "ok";
 
   return (
     <main className="page">
@@ -75,6 +113,38 @@ export default function HomePage() {
           </div>
 
           <p className="app-subtitle">Send SMS</p>
+
+          {/* ── Balance widget ── */}
+          <div className={`balance-bar balance-${balanceStatus}`}>
+            <span className="balance-label">SMS Credits</span>
+            {balanceStatus === "loading" && (
+              <span className="balance-value">Checking…</span>
+            )}
+            {balanceStatus === "empty" && (
+              <span className="balance-value">
+                0 — <strong>Top up to send messages</strong>
+              </span>
+            )}
+            {balanceStatus === "low" && (
+              <span className="balance-value">
+                {balance} — <strong>Low balance, top up soon</strong>
+              </span>
+            )}
+            {balanceStatus === "ok" && (
+              <span className="balance-value">{balance} credits</span>
+            )}
+            {balanceError && (
+              <span className="balance-value">{balanceError}</span>
+            )}
+            <button
+              type="button"
+              className="balance-refresh"
+              onClick={fetchBalance}
+              title="Refresh balance"
+            >
+              ↻
+            </button>
+          </div>
 
           {error && <div className="error-banner">{error}</div>}
 
@@ -114,10 +184,16 @@ export default function HomePage() {
               />
             </div>
 
-            <button type="submit" className="send-btn" disabled={isLoading}>
+            <button
+              type="submit"
+              className="send-btn"
+              disabled={isLoading || balance === 0}
+            >
               {isLoading
                 ? `Sending to ${numberCount} number${numberCount !== 1 ? "s" : ""}…`
-                : "Send SMS"}
+                : balance === 0
+                  ? "No credits — cannot send"
+                  : "Send SMS"}
             </button>
           </form>
         </div>
